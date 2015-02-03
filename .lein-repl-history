@@ -1,0 +1,8 @@
+exit
+(use 'picture-gallery.repl)
+(start-server)
+(use 'picture-gallery.repl)
+(start-server)
+(use 'picture-gallery.repl)
+(start-server)
+(exit)
