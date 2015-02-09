@@ -6,10 +6,16 @@
                  [hiccup "1.0.5"]
                  [ring-server "0.3.1"]
                  [postgresql/postgresql "9.1-901.jdbc4"]
-                 [org.clojure/java.jdbc "0.2.3"]
+                 [org.clojure/java.jdbc "0.3.5"]
                  [ring/ring-anti-forgery "1.0.0"]
                  [com.taoensso/timbre "2.6.1"]
-                 [lib-noir "0.9.5"]]
+                 [lib-noir "0.9.5"]
+                 [korma "0.4.0"]
+                 [log4j "1.2.15"
+                  :exclusions [javax.mail/mail
+                               javax.jms/jms
+                               com.sun.jdmk/jmxtools
+                               com.sun.jmx/jmxri]]]
   :plugins [[lein-ring "0.8.12"]]
   :ring {:handler picture-gallery.handler/app
          :init picture-gallery.handler/init

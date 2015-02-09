@@ -1,5 +1,6 @@
 (ns picture-gallery.models.db
-  (:require [clojure.java.jdbc :as sql]))
+  (:require [korma.db :refer :all]
+            [korma.core :refer :all]))
 
 (def db
   {:subprotocol "postgresql"
@@ -7,50 +8,78 @@
    :user "admin"
    :password "admin"})
 
-(defmacro with-db [f & body]
-  `(sql/with-connection ~db (~f ~@body)))
+(defdb korma-db db)
+(defentity users)
+(defentity images)
+
+
+;; (defmacro with-db [f & body]
+;;   `(sql/with-connection ~db (~f ~@body)))
 
 (defn create-user [user]
-  (with-db sql/insert-record :users user))
+  (insert users (values user)))
+;;   (with-db sql/insert-record :users user))
 
 
 (defn get-user [id]
-  (with-db sql/with-query-results
-    res ["select * from users where id =?" id] (first res)))
+  (first (select users
+                 (where {:id id}))))
+
+;;   (with-db sql/with-query-results
+;;     res ["select * from users where id =?" id] (first res)))
 
 (defn add-image [userid name]
-  (with-db
-    sql/transaction
-    (if (sql/with-query-results
-          res
-          ["select userid from images where userid=? and name=? " userid name]
-          (empty? res))
-      (sql/insert-record :images {:userid userid :name name})
-      (throw
-       (Exception. "you have already uploaded an image with the same name")))))
+  (transaction
+   (if (empty? (select images
+                       (where {:userid userid :name name})
+                       (limit 1)))
+     (insert images (values {:userid userid :name name}))
+     (throw
+      (Exception. "You have already uploaded an image with the same name")))))
 
-  (sql/with-connection db
-    (sql/with-query-results res ["select * from users "] (println res)))
+;;   (with-db
+;;     sql/transaction
+;;     (if (sql/with-query-results
+;;           res
+;;           ["select userid from images where userid=? and name=? " userid name]
+;;           (empty? res))
+;;       (sql/insert-record :images {:userid userid :name name})
+;;       (throw
+;;        (Exception. "you have already uploaded an image with the same name")))))
+
+;;   (sql/with-connection db
+;;     (sql/with-query-results res ["select * from users "] (println res)))
 
 (defn images-by-user [userid]
-  (with-db
-    sql/with-query-results
-    res ["select * from images where userid = ? " userid] (doall res)))
+  (select images (where {:userid userid})))
+
+;;   (with-db
+;;     sql/with-query-results
+;;     res ["select * from images where userid = ? " userid] (doall res)))
 
 ;;(images-by-user "hzm")
-(defn get-gallery-previews []
-  (with-db
-    sql/with-query-results
-    res ["select * from
-         (select *,row_number() over (partition by userid) as row_number from images)
-         as rows where row_number=1"]
-    (doall res)))
-
-
 (defn delete-image [userid name]
-  (with-db
-    sql/delete-rows :images ["userid=? and name=?" userid name]))
+  (delete images (where {:userid userid :name name})))
+
+(defn get-gallery-previews []
+  (exec-raw
+   ["select * from
+    (select * ,row_number() over (partition by userid) as row_number from images )
+    as rows where row_number =1 " []]
+   :results))
+;;   (with-db
+;;     sql/with-query-results
+;;     res ["select * from
+;;          (select *,row_number() over (partition by userid) as row_number from images)
+;;          as rows where row_number=1"]
+;;     (doall res)))
+
+
+;; (defn delete-image [userid name]
+;;   (with-db
+;;     sql/delete-rows :images ["userid=? and name=?" userid name]))
 
 (defn delete-user [userid]
-  (with-db
-    sql/delete-rows :users ["id=?" userid]))
+  (delete users (where {:userid userid})))
+;;   (with-db
+;;     sql/delete-rows :users ["id=?" userid]))

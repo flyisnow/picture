@@ -6,3 +6,49 @@ exit
 (use 'picture-gallery.repl)
 (start-server)
 (exit)
+(use 'picture-gallery.models.db)
+(use 'korma.db)
+(defentity uses)
+(use 'picture-gallery.models.db)
+(use 'picture-gallery.repl)
+(quit)
+(use 'picture-gallery.models.db)
+(use 'korma.core )
+(use 'korma.db)
+(defentity user)
+(defdb korma-db nil)
+(use 'picture-gallery.models.db)
+(reuse 'picture-gallery.models.db)
+(reload 'picture-gallery.models.db)
+(use 'picture-gallery.models.db)
+(use 'korma.db)
+(def db
+  {:subprotocol "postgresql"
+   :subname "//127.0.0.1:5432/gallery"
+   :user "admin"
+   :password "admin"})
+(defdb korma-db db)
+(defentity users)
+(use 'korma.core)
+(defentity users)
+(defentity images)
+(defn get-user [id]
+  (first (select users
+                 (where {:id id}))))
+(get-user "hzm")
+(get-user "stt")
+(ns ppp)
+(ns picture-gallery.models.db
+  (:require
+   [korma.db :refer :all]
+   [korma.core :refer :all]))
+(def db
+  {:subprotocol "postgresql"
+   :subname "//127.0.0.1:5432/gallery"
+   :user "admin"
+   :password "admin"})
+(defdb korma-db db)
+(defentity users)
+(defentity images)
+(defn create-user [user]
+  (insert users (values user)))
