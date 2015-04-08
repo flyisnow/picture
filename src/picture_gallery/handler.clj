@@ -16,7 +16,7 @@
             [picture-gallery.routes.gallery :refer [gallery-routes]]))
 
 (defn init []
-  (timbre/set-config! [:timestamp -pattern] "yyyy-MM-dd HH:mm:ss")
+;;   (timbre/set-config! [:timestamp -pattern] "yyyy-MM-dd HH:mm:ss")
   (println "picture-gallery is starting"))
 
 (defn user-page [_]

@@ -26,4 +26,5 @@
    {:ring
     {:open-browser? false, :stacktraces? false, :auto-reload? false}}
    :dev
+   {:plugins [[cider/cider-nrepl "0.8.0"]]}
    {:dependencies [[ring-mock "0.1.5"] [ring/ring-devel "1.3.1"]]}})

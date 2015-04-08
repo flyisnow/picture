@@ -7,6 +7,16 @@
         ring.mock.request
         picture-gallery.handler))
 
+(deftest pairs-of-values
+  (let [args ["--server" "localhost"
+              "--port" "8080"
+              "--environment" "production"]]
+    (is (= {:server "localhost"
+            :port "8080"
+            :environment "production"}
+           (parse-args args)))))
+
+
 (defn mock-get-user [id]
   (if ( = id "foo")
     {:id "foo" :pass (encrypt "123456")}))
